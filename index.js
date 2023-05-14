@@ -17,7 +17,8 @@
 | Note: This file does not contain any emulator-code.
 -------------------------------------------------------------------------*/
 
-const URL_DATABASE = window.location.protocol+"//"+window.location.hostname+"/db";
+//const URL_DATABASE = window.location.protocol+"//"+window.location.hostname+"/db";
+const URL_DATABASE = "db";
 const URL_DATABASE_GAMES = URL_DATABASE+"/games";
 const URL_DATABASE_DEMOS = URL_DATABASE+"/demos";
 const URL_DATABASE_DEMOS_AGA = URL_DATABASE+"/demos_aga";
