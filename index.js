@@ -17,145 +17,11 @@
 | Note: This file does not contain any emulator-code.
 -------------------------------------------------------------------------*/
 
-//const URL_DATABASE = window.location.protocol+"//"+window.location.hostname+"/db";
-const URL_DATABASE = "db";
-const URL_DATABASE_GAMES = URL_DATABASE+"/games";
-const URL_DATABASE_DEMOS = URL_DATABASE+"/demos";
-const URL_DATABASE_DEMOS_AGA = URL_DATABASE+"/demos_aga";
-const URL_DATABASE_TOOLS = URL_DATABASE+"/tools";
+const URL_ADF = "adf";
+const URL_ROM = "rom";
 
-/*---------------------------------*/
-
-/* dbEntry types */
-const DBT_GAME = 1;
-const DBT_DEMO = 2;
-const DBT_DAGA = 3;
-const DBT_TOOL = 4;
-
-/* dbEntry flags */
-const DBF_MDC = 1; /* require manual disk-change by user */
-const DBF_NOT = 2; /* disable turbo-mode for floppies */
-const DBF_COL = 4; /* enable collision-detection */
-const DBF_BIM = 8; /* enable immediate blitter */
-const DBF_ECS = 16; /* ECS required */
-const DBF_AGA = 32; /* AGA required */
-const DBF_030 = 64; /* 68030 enabled */
-
-function dbEntry(t,nd, n,d,p,l,y, f,no) {
-	this.id = Math.random() * 0xffffffff >>> 0;
-
-	this.type = t;
-	this.numdisks = nd;
-
-	this.name = n;
-	this.developer = d;
-	this.publisher = p;
-	this.license = l;
-	this.year = y;
-
-	this.flags = f;
-	this.notes = no;
-}
-
-const DB_IDS = [[
-	"cfg_game",
-	"cfg_demo",
-	"cfg_demo_aga",
-	"cfg_tool"
-], [
-	"cfg_floppy_select_game",
-	"cfg_floppy_select_demo",
-	"cfg_floppy_select_demo_aga",
-	"cfg_floppy_select_tool"
-]];
-const DB_URLS = [
-	URL_DATABASE_GAMES,
-	URL_DATABASE_DEMOS,
-	URL_DATABASE_DEMOS_AGA,
-	URL_DATABASE_TOOLS
-];
-
-/*---------------------------------*/
-
-function mkA(url, name) { return '<a target="_blank" href="'+url+'">'+name+'</a>'; }
-
-const URL_ENABLE_SOFTWARE = mkA("https://blockyskies.com", "Enable Software");
-const URL_TEAM_HOI = mkA("https://www.sevensheaven.nl", "Team Hoi");
-const URL_RETROGURU = mkA("https://www.retroguru.com", "retroguru");
-const URL_LOEWENSTEIN = mkA("https://www.richard-loewenstein.de", "Richard Löwenstein");
-const URL_HECKMECK = mkA("https://heckmeck.de", "Alexander Grupe");
-
-const URL_AROS = mkA("https://aros.sourceforge.io", "aros.sourceforge.io");
-const URL_AROS_LIC = mkA("https://aros.sourceforge.io/license.html", "APL");
-const URL_SYSINFO = mkA("https://sysinfo.d0.se", "Nic Wilson");
-
-const db = [
-	new dbEntry(DBT_GAME,1, "Air Ace II",         "SEUCK","","PD",                 "1989", 0, "Loading takes very long."),
-	new dbEntry(DBT_GAME,1, "Asteroids",          "Vertical Developments","","PD", "1979", 0, ""),
-	new dbEntry(DBT_GAME,1, "BlockySkies",        URL_ENABLE_SOFTWARE,"","FW",     "2016", 0, ""),
-	new dbEntry(DBT_GAME,1, "Crazy Sue",          "Jumpshoe,Hironymous","","PD",   "1991", 0, "Loading can take some time."),
-	new dbEntry(DBT_GAME,1, "Deluxe Galaga 2.4",  "Edgar Vigdal","","FW",          "1994", DBF_COL, ""),
-	new dbEntry(DBT_GAME,2, "Hoi",                URL_TEAM_HOI,"Hollyware","FW",   "1992", DBF_MDC, "Press the LMB to skip the intro and insert the 2nd disk manually.<br /><br /><span title=\"After the disk-change, place the \"LVL\"-pointer in the far lower right of the green quarter screen. The bottom \"L\" must be positioned in the corner precisely. Click the LMB, then shift the \"LVL\" pointer to the absolute top left of the screen (as far as it can be moved in that direction). Click the LMB again. Any of the first four levels may now be selected for game play. Press the F4 key during game play for twelve lives. Note: Level 5 can only be accessed by completing level 4.\">Cheat (move mouse-over)</span>"),
-	new dbEntry(DBT_GAME,1, "Norse Gods",         URL_LOEWENSTEIN,"","FW",         "1991", 0, ""),
-	new dbEntry(DBT_GAME,1, "Pollymorf",          "Andrew Campbell","","PD",       "1993", 0, "Loading takes some time, just wait."),
-	new dbEntry(DBT_GAME,1, "Sqrxz",              URL_RETROGURU,"","FW",           "2012", 0, "The color-stripes are normal, just wait..."),
-	new dbEntry(DBT_GAME,1, "Sqrxz 2",            URL_RETROGURU,"","FW",           "2012", 0, "After the start, click the RMB for the trainer menu. The color-stripes are normal, just wait..."),
-	new dbEntry(DBT_GAME,1, "Super Obliteration", "David Papworth","","FW",        "1993", 0, ""),
-	new dbEntry(DBT_GAME,1, "Tanx",               "Robertz Gaz","","PD",           "1991", 0, ""),
-	new dbEntry(DBT_GAME,1, "Zerosphere",         URL_HECKMECK,"","FW",            "2015", 0, ""),
-
-	new dbEntry(DBT_DEMO,1, "242",                "Virtual Dreams","","",          "1992", 0, ""),
-	new dbEntry(DBT_DEMO,2, "9 Fingers",          "Spaceballs","","",              "1993", DBF_NOT, ""),
-	new dbEntry(DBT_DEMO,1, "Alpha and Omega",    "Pure Metal Coders","","",       "1991", DBF_NOT, ""),
-	new dbEntry(DBT_DEMO,1, "Copper Master",      "Angels","","",                  "1990", 0, ""),
-	new dbEntry(DBT_DEMO,1, "Deja Vu",            "Anarchy","","",                 "1992", 0, ""),
-	new dbEntry(DBT_DEMO,1, "Ecliptica",          "TRSI","","",                    "1991", DBF_ECS, "The blue flashing in the beginning is normal. Just wait..."),
-	new dbEntry(DBT_DEMO,1, "Elysium",            "Sanity","","",                  "1991", 0, ""),
-	new dbEntry(DBT_DEMO,1, "Enigma",             "Phenomena","","",               "1991", 0, ""),
-	new dbEntry(DBT_DEMO,1, "Global Trash",       "Silents","","",                 "1992", 0, ""),
-	new dbEntry(DBT_DEMO,2, "Hardwired",          "Crionics, Silents","","",       "1992", DBF_MDC|DBF_BIM, "Insert the 2nd disk manually and click the RMB when done."),
-	new dbEntry(DBT_DEMO,1, "HipHop Hater",       "Mathias Olsson","","",          "1991", 0, ""),
-	new dbEntry(DBT_DEMO,1, "Ice",                "Silents","","",                 "1991", 0, "Press the LMB at the intro-screen."),
-	new dbEntry(DBT_DEMO,1, "Lost World",         "Balance DK","","",              "1992", 0, "Press the LMB at the intro-screen."),
-	new dbEntry(DBT_DEMO,1, "Mental Hangover",    "Scoopex","","",                 "1992", 0, ""),
-	new dbEntry(DBT_DEMO,1, "Multica",            "Andromeda","","",               "1992", 0, "Press the LMB at the intro-screen."),
-	new dbEntry(DBT_DEMO,1, "Project-X (demo rolling)", "Team 17","","",           "1992", 0, "Press 'Fire' to skip to the 2nd level anytime."),
-	new dbEntry(DBT_DEMO,1, "Rampage",            "TEK","","",                     "1994", DBF_NOT, "Press the LMB at the intro-screen."),
-	new dbEntry(DBT_DEMO,1, "State of the Art",   "Spaceballs","","",              "1992", 0, ""),
-	new dbEntry(DBT_DEMO,1, "Static Chaos",       "Silents","","",                 "1992", 0, ""),
-	new dbEntry(DBT_DEMO,1, "Technological Death","Mad Elks","","",                "1993", DBF_BIM, ""),
-	new dbEntry(DBT_DEMO,1, "Total Destruction",  "Crionics","","",                "1990", 0, ""),
-	new dbEntry(DBT_DEMO,1, "Wayfarer",           "Spaceballs","","",              "1992", 0, ""),
-	new dbEntry(DBT_DEMO,1, "World of Commodore", "Sanity","","",                  "1992", 0, ""),
-
-	new dbEntry(DBT_DAGA,1, "Atome",              "Skarla","","",                        "1996", DBF_AGA|DBF_030, ""),
-	new dbEntry(DBT_DAGA,2, "Burning Chrome",     "Haujobb","","",                       "1996", DBF_AGA|DBF_030, "Open the disk AC1: by double-click and then double-click 'BurningChrome' <b>once</b>."),
-	new dbEntry(DBT_DAGA,1, "C42",                "Case, Groo, Juliet","","",            "1995", DBF_AGA|DBF_030, ""),
-	new dbEntry(DBT_DAGA,2, "Control",            "Oxygene","","",                       "1995", DBF_AGA|DBF_030|DBF_MDC, "When asked, insert the 2nd disk manually."),
-	new dbEntry(DBT_DAGA,1, "Crazy Sexy Cool",    "Essence","","",                       "1995", DBF_AGA|DBF_030, ""),
-	new dbEntry(DBT_DAGA,2, "Deep",               "CNCD &amp; Parallax","","",           "1995", DBF_AGA, ""),
-	new dbEntry(DBT_DAGA,1, "Friday at Eight",    "Polka Brothers","","",                "1994", DBF_AGA, ""),
-	new dbEntry(DBT_DAGA,1, "Full Moon",          "Virtual Dreams, Fairlight","","",     "1993", DBF_AGA, ""),
-	new dbEntry(DBT_DAGA,1, "Gevalia",            "Polka Brothers","","",                "1994", DBF_AGA, ""),
-	new dbEntry(DBT_DAGA,1, "Nexus 7",            "Andromeda","","",                     "1994", DBF_AGA|DBF_030, ""),
-	new dbEntry(DBT_DAGA,1, "Not Again",          "Sanity, Complex, Avena, Lego","","",  "1992", DBF_AGA, "Press the RMB to get to the next section anytime."),
-	new dbEntry(DBT_DAGA,2, "Origin",             "Complex","","",                       "1993", DBF_AGA|DBF_NOT, ""),
-	new dbEntry(DBT_DAGA,1, "Real",               "Complex","","",                       "1994", DBF_AGA|DBF_NOT, "In the last 3d-scene, hold the LMB to rotate and the RMB to walk around. (the scene which does have graphics errors)"),
-	new dbEntry(DBT_DAGA,1, "Roots",              "Sanity","","",                        "1994", DBF_AGA, ""),
-	new dbEntry(DBT_DAGA,2, "Switchback",         "Rebels","","",                        "1994", DBF_AGA|DBF_030, ""), /* 68030 */
-	new dbEntry(DBT_DAGA,4, "Twisted",            "Polka Brothers","","",                "1994", DBF_AGA, ""),
-	new dbEntry(DBT_DAGA,2, "Vision",             "Oxygene","","",                       "1995", DBF_AGA, ""),
-	new dbEntry(DBT_DAGA,4, "Wild",               "Anadune, Nah Color","","",            "1996", DBF_MDC|DBF_AGA, "When asked, change the disks manually."),
-
-	new dbEntry(DBT_TOOL,1, "AROS Bootdisk",      URL_AROS,"",URL_AROS_LIC,        "2016", 0, "Press 'Cancel' when asked for a Live-CD."),
-	new dbEntry(DBT_TOOL,1, "AIBB 6.5",           "Peter LaMonte Koop","","FW",    "1993", 0, "Type 'aibb' at the console. Be very patient at the 'Evaluating System...' screen."),
-	new dbEntry(DBT_TOOL,1, "SysInfo 4.4",        URL_SYSINFO,"","FW",             "2020", 0, ""),
-	new dbEntry(DBT_TOOL,1, "X-Copy 2.0",         "Cachet","","FW",                "1989", 0, "")
-];
-
-var dbUrl = "";
-var dbGrp = 0;
-var dbNum = 0;
+// Change this to your ADF file name.
+const ITCH_ADF = "SysInfo4_4.adf"
 
 /*---------------------------------*/
 
@@ -166,53 +32,16 @@ const AROS_EXT_CRC = 0xF2E52B07;
 
 /*---------------------------------*/
 
-const MAX_FILENAME = 40;
-
-const MODE_Database = 0;
-const MODE_Advanced = 1;
-var mode = MODE_Database; /* current mode */
-
-/* page-ids in the advanced-mode */
-const PID_None = 0;
-const PID_Model = 1;
-const PID_CPU = 2;
-const PID_Chipset = 3;
-const PID_RAM = 4;
-const PID_ROM = 5;
-const PID_ROM_Info = 6;
-const PID_Floppy = 7;
-const PID_Floppy_Info = 8;
-const PID_Mount = 9;
-const PID_Mount_Setup = 10;
-const PID_Video = 11;
-const PID_Audio = 12;
-const PID_Ports = 13;
-var page = PID_None; /* current page in the advanced-config */
-
-var useAROS = false; /* use AROS in the advanced-config */
-var romNum = -1; /* current rom-id if rom-info is shown  */
-var defRomInfo = null; /* kickstart rom-info */
-var defRomEncrypted = null; /* kickstart-rom is encrypted */
-var extRomInfo = null; /* extended rom-info */
-var extRomEncrypted = null; /* extended-rom is encrypted */
-var romKeyInfo = null; /* romkey-info */
-var amaxInfo = null; /* amax rom-info */
-var floppyNum = -1; /* current floppy-unit if floppy-info is shown  */
-var mountConfigNum = -1; /* current mount-unit if mount-info is shown  */
 var paused = false; /* is the emualtion currently paused? */
 var screened = false; /* is the video-output currently fullscreen? */
 var muted = false; /* is the audio-output currently muted? */
-
-var dskchg = false; /* disk-change requester in database-mode */
-var dskchgList = []; /* list of floppies to change, created dynamicaly */
-
-var cache = null; /* asynchronous file-cache */
 
 /*---------------------------------*/
 
 var sae = null; /* SAE instance */
 var cfg = null; /* reference to the config-object */
 var inf = null; /* reference to the info-object */
+var cache = null; /* asynchronous file-cache */
 
 /*-----------------------------------------------------------------------*/
 /* utils */
@@ -220,22 +49,6 @@ var inf = null; /* reference to the info-object */
 function decodeURL(url) {
 	return decodeURIComponent(url.replace(/\+/g, " "));
 }
-/*function addItemToURL() {
-	if (mode == MODE_Database) {
-		var dbe = dbNum > 0 ? db[dbNum - 1] : null;
-		if (dbe !== null) {
-			var name = dbe.name;
-			while (true) {
-				var tmp = name.replace(" ", "_");
-				if (tmp == name) break;
-				name = tmp;
-			}
-			window.location.hash = name;
-		} else
-			window.location.hash = "";
-	} else
-		window.location.hash = "";
-}*/
 
 /*---------------------------------*/
 /* CRC-32 checksumming */
@@ -291,15 +104,6 @@ function setInnerHTML(id, t) {
 	document.getElementById(id).innerHTML = t;
 }
 
-/*---------------------------------*/
-/* checkbox-input */
-
-function getCheckbox(id) {
-	return document.getElementById(id).checked;
-}
-function setCheckbox(id, checked) {
-	document.getElementById(id).checked = checked;
-}
 
 /*---------------------------------*/
 /* select-input */
@@ -311,18 +115,11 @@ function getSelect(id, asString) {
 		if (e[i].selected)
 			return asString ? e[i].value : Number(e[i].value);
 	}
-	//alert(sprintf("getSelect() ERROR id '%s'", id));
 	return false;
 }
 
 function setSelect(id, v) {
 	var e = document.getElementById(id);
-	/*for (var i = 0; i < e.length; i++) {
-		if (e[i].selected) {
-			e[i].selected = false;
-			break;
-		}
-	}*/
 	var vs = String(v);
 	for (var i = 0; i < e.length; i++) {
 		if (e[i].value === vs) {
@@ -331,7 +128,6 @@ function setSelect(id, v) {
 			return;
 		}
 	}
-	//alert(sprintf("setSelect() ERROR id '%s', value '%s'", id, vs));
 }
 
 /*---------------------------------*/
@@ -361,7 +157,6 @@ function setRadio(name, v) {
 			return;
 		}
 	}
-	//alert(sprintf("setRadio() ERROR name '%s', value '%s'", name, vs));
 }
 
 /*---------------------------------*/
@@ -476,36 +271,6 @@ function switchBaseEmul(emul) {
 	}
 }
 
-/*---------------------------------*/
-
-/*function fireButtonName(fire) {
-	switch (fire) {
-		case 0: return "None";
-		case 16: return "Shift";
-		case 17: return "Ctrl";
-		case 13: return "Enter";
-		case 32: return "Space";
-		case 8: return "Backspace";
-		case 96: return "Numpad 0";
-		case 106: return "Numpad *";
-		case 107: return "Numpad ";
-		case 109: return "Numpad -";
-		case 110: return "Numpad .";
-		case 111: return "Numpad /";
-		case 46: return "Delete";
-		case 45: return "Insert";
-		case 34: return "Page down";
-		case 33: return "Page up";
-		case 35: return "End";
-		case 36: return "Home";
-		case 19: return "Pause";
-		case 144: return "Num lock";
-		case 145: return "Scroll lock";
-		case 49: return "1";
-		case 50: return "2";
-		default: return "ERROR";
-	}
-}*/
 function fireButtonName(fire) {
 	switch (fire) {
 		case "": return "None";
@@ -573,55 +338,6 @@ function saee2text(err) {
 }
 
 /*-----------------------------------------------------------------------*/
-/* database */
-
-function dbInit() {
-	function addOption(select, text, value) {
-		var option = document.createElement("option");
-		if (text.length)
-			option.text = text;
-		option.value = String(value);
-		if (value == 0) {
-			option.style.fontWeight = "bold";
-			option.disabled = "disabled";
-		}
-		select.add(option, null);
-	}
-	for (var dbt = 1; dbt <= 4; dbt++) {
-		var s = document.getElementById(DB_IDS[0][dbt - 1]);
-		for (var i = 0; i < db.length; i++) {
-			if (db[i].type == dbt)
-				addOption(s, db[i].name, 1 + i);
-		}
-	}
-	for (var dbt = 1; dbt <= 4; dbt++) {
-		var s = document.getElementById(DB_IDS[1][dbt - 1]);
-		for (var i = 0; i < db.length; i++) {
-			if (db[i].type == dbt) {
-				if (!(db[i].flags & DBF_MDC)) /* skip items that require manual disk-change */
-					addOption(s, db[i].name, 1 + i);
-			}
-		}
-	}
-}
-
-function dbFindTypeNamePos(type, name) {
-	for (var i = 0; i < db.length; i++) {
-		if (db[i].type == type && db[i].name == name)
-			return i;
-	}
-	return -1;
-}
-
-function dbFindId(id) {
-	for (var i = 0; i < db.length; i++) {
-		if (db[i].id == id)
-			return db[i];
-	}
-	return null;
-}
-
-/*-----------------------------------------------------------------------*/
 /* asynchronous file cache */
 
 const S_PENDING = 1;
@@ -671,25 +387,14 @@ function Cache() {
 				dst.size = item.size;
 				dst.crc32 = item.crc32;
 			}
-			//console.log("cache.req() '"+url+"' is cached.");
 			return true;
 		}
 		item = new CacheItem(url);
 		items.push(item);
 
-		//console.log("cache.req() start downloading '"+url+"'...");
-
 		load(url, function() {
 			if (this.status == 200) {
 				if (this.responseText.length == size) {
-					/*if (crc !== false) {
-						var hash = crc32(this.responseText);
-						if (hash != crc) {
-							item.state = S_ERROR;
-							alert(sprintf("Wrong checksum for '%s'\n\n(should be $%08x, but is $%08x)\n\nTry to flush the browser-cache with 'Ctrl+Shift+Del' and press F5 to reload...", url, crc, hash));
-							return;
-						}
-					}*/
 					//item.path = path;
 					item.name = name;
 					item.data = this.responseText;
@@ -703,7 +408,6 @@ function Cache() {
 						dst.size = item.size;
 						dst.crc32 = item.crc32;
 					}
-					//console.log("cache.req() downloaded of '"+url+"' done.");
 				} else {
 					item.state = S_ERROR;
 					alert(sprintf("Wrong file-length for '%s'\n\n(should be %d, but is %d)", url, size, this.responseText.length));
@@ -733,17 +437,7 @@ function loadFile(e, callback) {
 	reader.readAsBinaryString(e);
 }
 
-/*-----------------------------------------------------------------------*/
-/* database cfg */
 
-function setDatabaseConfig() {
-	//setSelect("cfg_video_resolution_1", cfg.video.hresolution);
-	//setCheckbox("cfg_video_skip_1", cfg.video.framerate != 1);
-
-	styleDisplayBlock("config_database", 1);
-	styleDisplayTableCell("controls_disk", 0);
-	styleDisplayTableCell("controls_screen", inf.video.requestFullScreen ? 1:0);
-}
 
 function getDatabaseEntryFilename(dbe, disk, adf) {
 	if (dbe.numdisks == 1)
@@ -752,103 +446,26 @@ function getDatabaseEntryFilename(dbe, disk, adf) {
 		return dbe.name + " (Disk "+String(disk+1)+")" + (adf ? ".adf" : "");
 }
 function getDatabaseFloppy() {
-	if (dbNum == 0) { /* nothing selected */
-		for (var i = 0; i < 4; i++) {
-			cfg.floppy.drive[i].type = i == 0 ? SAEC_Config_Floppy_Type_35_DD : SAEC_Config_Floppy_Type_None;
-			cfg.floppy.drive[i].file.clr();
-		}
-		cfg.floppy.speed = SAEC_Config_Floppy_Speed_Original;
-		return true;
-	}
 
-	if (typeof db[dbNum - 1] == "undefined") {
-		//alert("bug!");
-		return false;
-	}
-	var dbe = db[dbNum - 1];
+	cfg.floppy.drive[0].type = SAEC_Config_Floppy_Type_35_HD;
+	cfg.floppy.speed = SAEC_Config_Floppy_Speed_Turbo;
+	cache.req(dbUrl, filename, 0xdc000, false, cfg.floppy.drive[0].file);
 
-	dskchgList = [];
-	if (dbe.flags & DBF_MDC) { /* manual disk-change required */
-		if (dbe.numdisks == 1)
-			dskchgList.push(dbe.name);
-		else {
-			for (var n = 0; n < dbe.numdisks; n++)
-				dskchgList.push(getDatabaseEntryFilename(dbe, n, false));
-		}
-
-		/* request DF0 immediately */
-		cfg.floppy.drive[0].type = SAEC_Config_Floppy_Type_35_DD;
-		var filename = getDatabaseEntryFilename(dbe, 0, true);
-		cache.req(dbUrl, filename, 0xdc000, false, cfg.floppy.drive[0].file);
-
-		/* precache DF1-DF3 for later */
-		for (var n = 1; n < dbe.numdisks; n++) {
-			cfg.floppy.drive[n].type = SAEC_Config_Floppy_Type_None; /* disable for now. will be enabled when a disk is inserted */
-			cfg.floppy.drive[n].file.clr();
-
-			filename = getDatabaseEntryFilename(dbe, n, true);
-			cache.req(dbUrl, filename, 0xdc000, false, false);
-		}
-	} else { /* request all disks immediately */
-		for (var n = 0; n < dbe.numdisks; n++) {
-			var filename = getDatabaseEntryFilename(dbe, n, true);
-			cfg.floppy.drive[n].type = SAEC_Config_Floppy_Type_35_DD;
-			cache.req(dbUrl, filename, 0xdc000, false, cfg.floppy.drive[n].file);
-		}
-		for (var n = dbe.numdisks; n < 4; n++) {
-			cfg.floppy.drive[n].type = SAEC_Config_Floppy_Type_None;
-			cfg.floppy.drive[n].file.clr();
-		}
-	}
-	cfg.floppy.speed = (dbe.flags & DBF_NOT) == 0 ? SAEC_Config_Floppy_Speed_Turbo : SAEC_Config_Floppy_Speed_Original;
 	return true;
 }
 
 function getDatabaseConfig() {
-	var dbe = dbNum > 0 ? db[dbNum - 1] : null;
-
-	if (dbe !== null) {
-		if (dbe.flags & DBF_AGA)
-			sae.setModel(SAEC_Model_A1200, 0); /* set an A1200 for AGA */
-		else if (dbe.flags & DBF_ECS)
-			sae.setModel(SAEC_Model_A500P, 0); /* set an A500+ for ECS */
-		else
-			sae.setModel(SAEC_Model_A500, 0); /* set an A500 for OCS */
-
-		if (dbe.flags & DBF_030)
-			cfg.cpu.model = SAEC_Config_CPU_Model_68030;
-
-		cfg.memory.z2FastSize = 4 << 20; /* give 4MB Zorro2 memory */
-
-		cfg.chipset.colLevel = SAEC_Config_Chipset_ColLevel_None;
-		if (dbe.flags & DBF_COL)
-			cfg.chipset.colLevel = SAEC_Config_Chipset_ColLevel_Sprite_Playfield; /* enable collision-detection */
-
-		if (dbe.flags & DBF_BIM)
-			cfg.chipset.blitter.immediate = true;
-	} else {
-		sae.setModel(SAEC_Model_A500, 0);
-
-		cfg.memory.z2FastSize = 4 << 20; /* give 4MB Zorro2 memory */
-	}
+	sae.setModel(SAEC_Model_A1200, 0); /* set an A1200 for AGA */
+	cfg.memory.z3FastSize = 4 << 20; /* give 4MB Zorro2 memory */
+	cfg.chipset.colLevel = SAEC_Config_Chipset_ColLevel_Sprite_Playfield; /* enable collision-detection */
 	cache.req(URL_DATABASE, AROS_ROM_FILE, 0x80000, AROS_ROM_CRC, cfg.memory.rom);
 	cache.req(URL_DATABASE, AROS_EXT_FILE, 0x80000, AROS_EXT_CRC, cfg.memory.extRom);
+	cfg.floppy.drive[0].type = SAEC_Config_Floppy_Type_35_HD;
+	cfg.floppy.speed = SAEC_Config_Floppy_Speed_Turbo;
+	cache.req(dbUrl, filename, 0xdc000, false, cfg.floppy.drive[0].file);
 
-	if (!getDatabaseFloppy())
-		return false;
 
 	cfg.video.id = "myVideo"; /* html-div element to add video-output */
-
-	/*cfg.video.hresolution = getSelect("cfg_video_resolution_1");
-	if (cfg.video.hresolution == SAEC_Config_Video_HResolution_LoRes)
-		cfg.video.vresolution = SAEC_Config_Video_VResolution_NonDouble;
-	else
-		cfg.video.vresolution = SAEC_Config_Video_VResolution_Double;
-
-	cfg.video.framerate = getCheckbox("cfg_video_skip_1") ? 2 : 1;*/
-
-	//cfg.video.size_win.width = SAEC_Video_DEF_AMIGA_WIDTH << cfg.video.hresolution;
-	//cfg.video.size_win.height = SAEC_Video_DEF_AMIGA_HEIGHT << cfg.video.hresolution;
 
 	setHooks();
 	return true;
@@ -1479,8 +1096,6 @@ function getAdvandedConfig() {
 function start() {
 	var s = cache.state();
 	if (s == S_VALID) { /* all files are downloaded or cached, go! */
-		freezeButtons(false, true);
-
 		var err = sae.start(); /* send start-request */
 		if (err != SAEE_None)
 			alert(saee2text(err));
@@ -1489,31 +1104,6 @@ function start() {
 		setTimeout(start, 250);
 	}
 	else /*if (s == S_ERROR)*/ { /* XMLHttpRequest-error */
-		freezeButtons(false, true);
-	}
-}
-/*function delayedStart() {
-	if (SAEC_Info.browser.id == SAEC_Info_Brower_ID_Firefox) {	// Thanks "dmcoles"
-		console.log("delayedStart() enabling audio-start delay for Firefox...");
-		setTimeout(start, 50);
-	} else
-		start();
-}*/
-
-function databaseStart() {
-	if (getDatabaseConfig()) {
-		freezeButtons(true, true);
-		//addItemToURL();
-		//delayedStart();
-		start();
-	}
-}
-
-function advandedStart() {
-	if (getAdvandedConfig()) {
-		freezeButtons(true, true);
- 		//delayedStart();
-		start();
 	}
 }
 
@@ -1546,60 +1136,30 @@ function mute(m) {
 /*---------------------------------*/
 
 function init() {
+
 	cache = new Cache();
 
 	sae = new ScriptedAmigaEmulator(); /* create emulator */
 	inf = sae.getInfo(); /* reference to cfg */
 	cfg = sae.getConfig(); /* reference to cfg */
 
-	//console.log(inf);
-	//console.log(cfg);
-
 	initHooks();
 	initGamepads();
 
-	dbInit();
-	setDatabaseConfig();
+	sae.setModel(SAEC_Model_A1200, 1); /* set an A1200 for AGA */
+//	cfg.memory.z2FastSize = 4 << 20; /* give 4MB Zorro2 memory */
+	cfg.chipset.colLevel = SAEC_Config_Chipset_ColLevel_Sprite_Playfield; /* enable collision-detection */
+	cache.req(URL_ROM, AROS_ROM_FILE, 0x80000, AROS_ROM_CRC, cfg.memory.rom);
+	cache.req(URL_ROM, AROS_EXT_FILE, 0x80000, AROS_EXT_CRC, cfg.memory.extRom);
+//	cfg.floppy.speed = SAEC_Config_Floppy_Speed_Turbo;
+	cfg.floppy.drive[0].type = SAEC_Config_Floppy_Type_35_HD;
+	cache.req(URL_ADF, ITCH_ADF, 0xdc000, false, cfg.floppy.drive[0].file);
+	cfg.floppy.drive[1].type = SAEC_Config_Floppy_Type_35_HD;
 
-	if (window.location.hash.length > 1) {
-		var start = false;
-		var name = decodeURL(window.location.hash.substr(1));
-		while (true) {
-			var tmp = name.replace("_", " ");
-			if (tmp == name) break;
-			name = tmp;
-		}
-		var pos;
-		if ((pos = dbFindTypeNamePos(DBT_GAME, name)) != -1) {
-			setSelect("cfg_game", pos+1);
-			preSelect(DBT_GAME);
-			start = true;
-		}
-		if (!start) {
-			if ((pos = dbFindTypeNamePos(DBT_DEMO, name)) != -1) {
-				setSelect("cfg_demo", pos+1);
-				preSelect(DBT_DEMO);
-				start = true;
-			}
-		}
-		if (!start) {
-			if ((pos = dbFindTypeNamePos(DBT_DAGA, name)) != -1) {
-				setSelect("cfg_demo_aga", pos+1);
-				preSelect(DBT_DAGA);
-				start = true;
-			}
-		}
-		if (!start) {
-			if ((pos = dbFindTypeNamePos(DBT_TOOL, name)) != -1) {
-				//document.getElementById("cfg_tool")[pos+1].selected = true;
-				setSelect("cfg_tool", pos+1);
-				preSelect(DBT_TOOL);
-				start = true;
-			}
-		}
-		if (start)
-			databaseStart();
-	}
+	cfg.video.id = "myVideo"; /* html-div element to add video-output */
+
+	setHooks();
+	start();
 }
 
 /*-----------------------------------------------------------------------*/
@@ -1637,177 +1197,6 @@ function switchCfg(m) {
 		setAdvandedConfig();
 		if (page == PID_None)
 			changePage(PID_Model);
-	}
-}
-
-/*-----------------------------------------------------------------------*/
-/* database cfg */
-
-function preSelect(grp) {
-	function insertRow1(table, item) {
-		var row = table.insertRow(-1);
-		var cell = row.insertCell(-1);
-		cell.innerHTML = item;
-		cell.colSpan = 4;
-	}
-	function insertRow2(table, item) {
-		var row = table.insertRow(-1);
-		var cell1 = row.insertCell(-1);
-		var cell2 = row.insertCell(-1);
-		cell1.className = "arm";
-		cell1.innerHTML = '<span class="label">'+item[0]+'</span>';
-		cell2.className = "alm";
-		cell2.innerHTML = item[1];
-		cell2.colSpan = 3;
-		cell2.style.width = "100%";
-	}
-	function insertRow4(table, item1, item2) {
-		var row = table.insertRow(-1);
-		var cell1 = row.insertCell(-1);
-		var cell2 = row.insertCell(-1);
-		if (item1 !== false) {
-			cell1.className = "arm";
-			cell1.innerHTML = '<span class="label">'+item1[0]+'</span>';
-			cell2.className = "alm";
-			cell2.innerHTML = item1[1];
-		}
-		cell1 = row.insertCell(-1);
-		cell2 = row.insertCell(-1);
-		cell2.style.width = "50%";
-		if (item2 !== false) {
-			cell1.className = "arm";
-			cell1.innerHTML = '<span class="label">'+item2[0]+'</span>';
-			cell2.className = "alm";
-			cell2.innerHTML = item2[1];
-		}
-	}
-
-	/* remove old box */
-	var div = document.getElementById("config_database_info");
-	var table = document.getElementById("config_database_info_content");
-	if (table)
-		div.removeChild(table);
-
-	var id = "";
-	if (dbGrp > 0 && dbGrp != grp) {
-		id = DB_IDS[0][dbGrp - 1];
-		setSelect(id, 0);
-	}
-
-	if (grp > 0) {
-		id = DB_IDS[0][grp - 1];
-		dbUrl = DB_URLS[grp - 1];
-		dbGrp = grp;
-		dbNum = getSelect(id);
-	} else {
-		dbGrp = 0;
-		dbNum = 0;
-		dbUrl = "";
-		return; /* no group selected */
-	}
-	if (dbNum == 0) /* no entry selected */
-		return;
-
-	/* create new box */
-	var dbe = db[dbNum - 1];
-
-	styleDisplayTableCell("controls_disk", (dbe.flags & DBF_MDC) != 0);
-
-	var href = dbe.name;
-	while (true) {
-		var tmp = href.replace(" ", "_");
-		if (tmp == href) break;
-		href = tmp;
-	}
-	href = window.location.protocol+"//" + window.location.hostname + "/#" + href;
-	var nameLink = dbe.name+" (<a target=\"_blank\" href=\""+href+"\">share</a>)";
-
-	var license = "";
-	if (dbe.license.length) {
-		if (dbe.license == "PD") license = "Public Domain";
-		else if (dbe.license == "FW") license = "Freeware";
-		else license = dbe.license;
-	}
-
-	if (grp == DBT_GAME) {
-		/*var keys = [
-			["Movement","Arrows"],
-			["Fire", fireButtonName(16)],
-			["Alt-fire", fireButtonName(17)]
-		];*/
-		var keys = [
-			["Movement","Arrows"],
-			["Fire", fireButtonName("ShiftRight")],
-			["Alt-fire", fireButtonName("ControlRight")]
-		];
-		var ctrl = "";
-		for (var i = 0; i < keys.length; i++)
-			ctrl += keys[i][0]+": "+keys[i][1]+"<br/>";
-
-		var ctrl = "<table class=\"ctrl\">";
-		for (var i = 0; i < keys.length; i++)
-			ctrl += "<tr><td class=\"arm\">"+keys[i][0]+":</td><td>"+keys[i][1]+"</td></tr>";
-		ctrl += "</table>";
-	}
-
-	table = document.createElement("table");
-	table.id = "config_database_info_content";
-	table.style.width = "100%";
-	table.style.whiteSpace = "normal";
-
-	insertRow1(table, "<div style=\"height:5px\"></div>");
-	insertRow1(table, "<div class=\"linehoriz\"></div>");
-	insertRow1(table, "<div style=\"height:5px\"></div>");
-
-	insertRow4(table, ["Name", nameLink], dbe.license.length ? ["License", license] : false);
-	insertRow4(table, ["Developer", dbe.developer], dbe.publisher.length ? ["Publisher", dbe.publisher] : false);
-	insertRow2(table, ["Year", dbe.year]);
-	if (grp == DBT_GAME)
-		insertRow2(table, ["Controls", ctrl]);
-	if (dbe.notes.length)
-		insertRow2(table, ["Notes", dbe.notes]);
-
-	div.appendChild(table);
-}
-
-/*-----------------------------------------------------------------------*/
-/* advanced cfg */
-
-function getPageElementID(pid) {
-	switch (pid) {
-		case PID_Model: return "cfg_page_model";
-		case PID_CPU: return "cfg_page_cpu";
-		case PID_Chipset: return "cfg_page_chipset";
-		case PID_RAM: return "cfg_page_ram";
-		case PID_ROM: return "cfg_page_rom";
-		case PID_ROM_Info: return "cfg_page_rom_info";
-		case PID_Floppy: return "cfg_page_floppy";
-		case PID_Floppy_Info: return "cfg_page_floppy_info";
-		case PID_Mount: return "cfg_page_mount";
-		case PID_Mount_Setup: return "cfg_page_mount_setup";
-		case PID_Video: return "cfg_page_video";
-		case PID_Audio: return "cfg_page_audio";
-		case PID_Ports: return "cfg_page_ports";
-	}
-}
-function changePage(pid) {
-	if (page != PID_None && page == pid)
-		return;
-	if (page != PID_None) {
-		if (page == PID_ROM_Info && romNum != -1)
-			closeRomInfo();
-		else if (page == PID_Floppy_Info && floppyNum != -1)
-			floppyCloseInfo();
-		else if (page == PID_Mount_Setup && mountConfigNum != -1)
-			mountCloseSetup(false);
-
-		var id = getPageElementID(page);
-		styleDisplayBlock(id, false);
-	}
-	page = pid;
-	if (page != PID_None) {
-		var id = getPageElementID(page);
-		styleDisplayBlock(id, true);
 	}
 }
 
@@ -2595,11 +1984,6 @@ function hook_event_stopped() {
 		muted = false;
 		switchMutePlay(muted);
 	}
-	if (dskchg)
-		dskchgClose();
-
-	if (mode == MODE_Advanced)
-		setAdvandedConfig();
 
 	switchBaseEmul(false);
 }
@@ -2617,8 +2001,6 @@ function hook_event_reseted(hard) {
 		muted = false;
 		switchMutePlay(muted);
 	}
-	if (dskchg)
-		dskchgClose();
 }
 
 function hook_event_paused(p) {
@@ -2655,9 +2037,6 @@ function hook_led_df(unit, dis, cyl, side, rw) {
 		e_led_df[unit].innerHTML = "-";
 		e_led_df[unit].style.color = COL_GRAY;
 	} else {
-		//e_led_df[unit].innerHTML = sprintf("%02d", cyl);
-		//e_led_df[unit].innerHTML = String(80 * side + cyl);
-		//e_led_df[unit].innerHTML = String(cyl)+"'"+String(side);
 		e_led_df[unit].innerHTML = String(cyl);
 		e_led_df[unit].style.color = rw == 1 ? COL_GREEN : (rw == 2 ? COL_RED : COL_GRAY);
 	}
@@ -2666,7 +2045,6 @@ function hook_led_fps(fps, paused) {
 	if (paused) {
 		e_led_fps.innerHTML = "0.0"; //"PAUSE";
 	} else {
-		//e_led_fps.innerHTML = sprintf("%.1f", fps);
 		e_led_fps.innerHTML = fps.toFixed(1);
 	}
 	e_led_fps.style.color = COL_GRAY;
@@ -2676,7 +2054,6 @@ function hook_led_cpu(usage, paused) {
 		e_led_cpu.innerHTML = "0&#37;"; //"PAUSE";
 		e_led_cpu.style.color = COL_GRAY;
 	} else {
-		//e_led_cpu.innerHTML = sprintf("%.0f", usage) + "&#37;";
 		e_led_cpu.innerHTML = usage.toFixed(0) + "&#37;";
 		if (usage < 90)
 			e_led_cpu.style.color = COL_GREEN;
